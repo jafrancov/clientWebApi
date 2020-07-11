@@ -3,11 +3,11 @@ import 'package:practicawidgets/src/models/materia.dart';
 
 import 'package:practicawidgets/src/api/apiService.dart';
 
-
 final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
 class FormAddScreen extends StatefulWidget {
   final Materia materia;
+
   FormAddScreen({this.materia});
 
   @override
@@ -22,10 +22,10 @@ class _FormAddScreenState extends State<FormAddScreen> {
   bool _isFieldCuatrimestreValid;
   bool _isFieldHorarioValid;
 
-  TextEditingController _controllerNombre   = TextEditingController();
+  TextEditingController _controllerNombre = TextEditingController();
   TextEditingController _controllerProfesor = TextEditingController();
-  TextEditingController _controllerCuatrimestre   = TextEditingController();
-  TextEditingController _controllerHorario  = TextEditingController();
+  TextEditingController _controllerCuatrimestre = TextEditingController();
+  TextEditingController _controllerHorario = TextEditingController();
 
   @override
   void initState() {
@@ -68,48 +68,60 @@ class _FormAddScreenState extends State<FormAddScreen> {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: RaisedButton(
                     child: Text(
-                      widget.materia == null ? "Guardar".toUpperCase() : "Actualizar".toUpperCase(),
-                      style: TextStyle(
-                          color: Colors.white
-                      ),
+                      widget.materia == null
+                          ? "Guardar".toUpperCase()
+                          : "Actualizar".toUpperCase(),
+                      style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: (){
-                      if( _isFieldNombreValid == null || _isFieldProfesorValid == null || _isFieldCuatrimestreValid == null || _isFieldHorarioValid == null || !_isFieldNombreValid || !_isFieldProfesorValid || !_isFieldCuatrimestreValid || !_isFieldHorarioValid ){
-                        _scaffoldState.currentState.showSnackBar(
-                            SnackBar(content: Text("Por favor llena todos los campos"),)
-                        );
+                    onPressed: () {
+                      if (_isFieldNombreValid == null ||
+                          _isFieldProfesorValid == null ||
+                          _isFieldCuatrimestreValid == null ||
+                          _isFieldHorarioValid == null ||
+                          !_isFieldNombreValid ||
+                          !_isFieldProfesorValid ||
+                          !_isFieldCuatrimestreValid ||
+                          !_isFieldHorarioValid) {
+                        _scaffoldState.currentState.showSnackBar(SnackBar(
+                          content: Text("Por favor llena todos los campos"),
+                        ));
                         return;
                       }
-                      setState( ()=>_isLoading = true );
-                      String nombre   = _controllerNombre.text.toString();
+                      setState(() => _isLoading = true);
+                      String nombre = _controllerNombre.text.toString();
                       String profesor = _controllerProfesor.text.toString();
-                      String cuatrimestre   = _controllerCuatrimestre.text.toString();
-                      String horario  = _controllerHorario.text.toString();
+                      String cuatrimestre =
+                          _controllerCuatrimestre.text.toString();
+                      String horario = _controllerHorario.text.toString();
                       //cómo obtener el siguiente ID
-                      Materia materia = Materia(id: 3,nombre: nombre, profesor: profesor, cuatrimestre: cuatrimestre, horario: horario);
-                      if( widget.materia == null ){
+                      Materia materia = Materia(
+                          id: 3,
+                          nombre: nombre,
+                          profesor: profesor,
+                          cuatrimestre: cuatrimestre,
+                          horario: horario);
+                      if (widget.materia == null) {
                         _apiService.createMateria(materia).then((isSuccess) {
-                          setState(()=> _isLoading = false);
-                          if( isSuccess ){
+                          setState(() => _isLoading = false);
+                          if (isSuccess) {
                             Navigator.pop(_scaffoldState.currentState.context);
-                          }else{
-                            _scaffoldState.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text("Tenemos problemas para agregar la materia, intenta nuevamente."),
-                                )
-                            );
+                          } else {
+                            _scaffoldState.currentState.showSnackBar(SnackBar(
+                              content: Text(
+                                  "Tenemos problemas para agregar la materia, intenta nuevamente."),
+                            ));
                           }
                         });
-                      }else{
+                      } else {
                         materia.id = widget.materia.id;
                         _apiService.updateMateria(materia).then((isSuccess) {
-                          setState(() => _isLoading=false );
-                          if( isSuccess ){
+                          setState(() => _isLoading = false);
+                          if (isSuccess) {
                             Navigator.pop(_scaffoldState.currentState.context);
-                          }else{
-                            _scaffoldState.currentState.showSnackBar(
-                                SnackBar(content: Text('No pudimos actualizar, intenta nuevamente.'))
-                            );
+                          } else {
+                            _scaffoldState.currentState.showSnackBar(SnackBar(
+                                content: Text(
+                                    'No pudimos actualizar, intenta nuevamente.')));
                           }
                         });
                       }
@@ -120,24 +132,26 @@ class _FormAddScreenState extends State<FormAddScreen> {
               ],
             ),
           ),
-          _isLoading ? Stack(
-            children: <Widget>[
-              Opacity(
-                opacity: 0.3,
-                child: ModalBarrier(
-                  dismissible: false,
-                  color: Colors.grey,
-                ),
-              ),
-              Center(child: CircularProgressIndicator()),
-            ],
-          ) : Container(),
+          _isLoading
+              ? Stack(
+                  children: <Widget>[
+                    Opacity(
+                      opacity: 0.3,
+                      child: ModalBarrier(
+                        dismissible: false,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Center(child: CircularProgressIndicator()),
+                  ],
+                )
+              : Container(),
         ],
       ),
     );
   }
 
-  Widget _buildTextFieldNombre(){
+  Widget _buildTextFieldNombre() {
     return TextField(
       controller: _controllerNombre,
       keyboardType: TextInputType.text,
@@ -156,7 +170,7 @@ class _FormAddScreenState extends State<FormAddScreen> {
     );
   }
 
-  Widget _buildTextFieldProfesor(){
+  Widget _buildTextFieldProfesor() {
     return TextField(
       controller: _controllerProfesor,
       keyboardType: TextInputType.text,
@@ -175,15 +189,16 @@ class _FormAddScreenState extends State<FormAddScreen> {
     );
   }
 
-  Widget _buildTextFieldCuatrimestre(){
+  Widget _buildTextFieldCuatrimestre() {
     return TextField(
       controller: _controllerCuatrimestre,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
         labelText: "Cuatrimestre",
-        errorText: _isFieldCuatrimestreValid == null || _isFieldCuatrimestreValid
-            ? null
-            : "El Cuatrimestre es obligatorio",
+        errorText:
+            _isFieldCuatrimestreValid == null || _isFieldCuatrimestreValid
+                ? null
+                : "El Cuatrimestre es obligatorio",
       ),
       onChanged: (value) {
         bool isFieldValid = value.trim().isNotEmpty;
@@ -194,7 +209,7 @@ class _FormAddScreenState extends State<FormAddScreen> {
     );
   }
 
-  Widget _buildTextFieldHorario(){
+  Widget _buildTextFieldHorario() {
     return TextField(
       controller: _controllerHorario,
       keyboardType: TextInputType.text,

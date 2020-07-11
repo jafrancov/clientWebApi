@@ -2,7 +2,8 @@ import 'package:http/http.dart' show Client;
 import 'package:practicawidgets/src/models/materia.dart';
 
 class ApiService {
-  final String baseUrl = "https://mtwdm-multi-android.azurewebsites.net/api/Materias";
+  final String baseUrl =
+      "https://mtwdm-multi-android.azurewebsites.net/api/Materias";
   Client httpClient = Client();
 
   Future<List<Materia>> getMaterias() async {
@@ -15,8 +16,7 @@ class ApiService {
   }
 
   Future<bool> createMateria(Materia data) async {
-    final response = await httpClient.post(
-        '$baseUrl',
+    final response = await httpClient.post('$baseUrl',
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

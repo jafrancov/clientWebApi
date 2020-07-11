@@ -26,114 +26,110 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: FutureBuilder(
           future: apiService.getMaterias(),
-          builder: (BuildContext context, AsyncSnapshot<List<Materia>> snapshot){
-            if(snapshot.hasError){
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Materia>> snapshot) {
+            if (snapshot.hasError) {
               return Center(
                 child: Text("Ocurrió un error: ${snapshot.error.toString()}"),
               );
-            }else if(snapshot.connectionState == ConnectionState.done){
+            } else if (snapshot.connectionState == ConnectionState.done) {
               List<Materia> materias = snapshot.data;
               return _buildListView(materias);
-            }else{
+            } else {
               return Center(
                 child: CircularProgressIndicator(),
               );
             }
-          }
-      ),
+          }),
     );
   }
 
-  Widget _buildListView(List<Materia> materias){
+  Widget _buildListView(List<Materia> materias) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListView.builder(
-        itemBuilder: (context, index){
+        itemBuilder: (context, index) {
           Materia materia = materias[index];
           return Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        materia.nombre,
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text(materia.profesor),
-                      Text(materia.cuatrimestre),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          FlatButton(
-                              onPressed: (){
-                                showDialog(
-                                    context: context,
-                                    builder: (context){
-                                      return AlertDialog(
-                                        title: Text('¿Estás seguro?'),
-                                        content: Text('Esto eliminará la materia ${materia.nombre}'),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                              onPressed: (){
-                                                Navigator.pop(context);
-                                                apiService
-                                                    .deleteMateria(materia.id)
-                                                    .then((isSuccess){
-                                                  if(isSuccess){
-                                                    setState(() {
-                                                      Scaffold.of(context)
-                                                          .showSnackBar(SnackBar(
-                                                        content: Text('Eliminación exitosa'),
-                                                      ));
-                                                    });
-                                                  }else{
-                                                    Scaffold.of(context).showSnackBar(
-                                                        SnackBar(
-                                                            content: Text('No pudimos eliminar, intenta nuevamente')
-                                                        )
-                                                    );
-                                                  }
-                                                });
-                                              },
-                                              child: Text('Si, elimina')
-                                          ),
-                                          FlatButton(
-                                            onPressed: (){ Navigator.pop(context);},
-                                            child: Text('No'),
-                                          )
-                                        ],
-                                      );
-                                    }
-                                );
-                              },
-                              child: Text(
-                                'Eliminar',
-                                style: TextStyle(color: Colors.red),
-                              )
-                          ),
-                          FlatButton(
-                              onPressed: (){
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context){ return FormAddScreen(materia: materia);}
-                                    )
-                                );
-                              },
-                              child: Text(
-                                'Editar',
-                                style: TextStyle(color: Colors.blue),
-                              )
-                          )
-                        ],
-                      )
-                    ],
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    materia.nombre,
+                    style: Theme.of(context).textTheme.headline6,
                   ),
-                )
-            ),
+                  Text(materia.profesor),
+                  Text(materia.cuatrimestre),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('¿Estás seguro?'),
+                                    content: Text(
+                                        'Esto eliminará la materia ${materia.nombre}'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            apiService
+                                                .deleteMateria(materia.id)
+                                                .then((isSuccess) {
+                                              if (isSuccess) {
+                                                setState(() {
+                                                  Scaffold.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        'Eliminación exitosa'),
+                                                  ));
+                                                });
+                                              } else {
+                                                Scaffold.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        content: Text(
+                                                            'No pudimos eliminar, intenta nuevamente')));
+                                              }
+                                            });
+                                          },
+                                          child: Text('Si, elimina')),
+                                      FlatButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('No'),
+                                      )
+                                    ],
+                                  );
+                                });
+                          },
+                          child: Text(
+                            'Eliminar',
+                            style: TextStyle(color: Colors.red),
+                          )),
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return FormAddScreen(materia: materia);
+                            }));
+                          },
+                          child: Text(
+                            'Editar',
+                            style: TextStyle(color: Colors.blue),
+                          ))
+                    ],
+                  )
+                ],
+              ),
+            )),
           );
         },
         itemCount: materias.length,
